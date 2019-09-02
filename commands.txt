@@ -37,3 +37,5 @@ https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io/projects?account
 https://allocations-pal-ashish-anant.apps.evans.pal.pivotal.io/allocations?projectId=1
 https://backlog-pal-ashish-anant.apps.evans.pal.pivotal.io/stories?projectId=1
 https://timesheets-pal-ashish-anant.apps.evans.pal.pivotal.io/time-entries?userId=1
+
+https://spring-cloud-broker.apps.evans.pal.pivotal.io/actuator/info
