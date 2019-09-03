@@ -13,6 +13,7 @@ curl -i -XPOST -H"Content-Type: application/json" localhost:8084/time-entries/ -
 curl -i localhost:8084/time-entries?userId=1
 
 
+cf  create-service p-service-registry standard tracker-service-registry
 
 CF_API_URL 
 CF_ORG
@@ -38,4 +39,40 @@ https://allocations-pal-ashish-anant.apps.evans.pal.pivotal.io/allocations?proje
 https://backlog-pal-ashish-anant.apps.evans.pal.pivotal.io/stories?projectId=1
 https://timesheets-pal-ashish-anant.apps.evans.pal.pivotal.io/time-entries?userId=1
 
-https://spring-cloud-broker.apps.evans.pal.pivotal.io/actuator/info
+
+https://allocations-pal-ashish-anant.apps.evans.pal.pivotal.io/actuator/health
+https://backlog-pal-ashish-anant.apps.evans.pal.pivotal.io/actuator/health
+https://timesheets-pal-ashish-anant.apps.evans.pal.pivotal.io/actuator/health
+https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io/actuator/health
+
+
+
+#Create a user.
+curl -i -XPOST -H"Content-Type: application/json" localhost:8083/registration -d'{"name": "Pete"}'
+
+#Find the account associated to the created user.
+curl -i localhost:8083/accounts?ownerId=4
+
+#Create Project A, and Project B using the registration server.
+curl -i -XPOST -H"Content-Type: application/json" localhost:8083/projects -d"{\"name\": \"Project C\", \"accountId\": \"2\"}" 
+#10
+curl -i -XPOST -H"Content-Type: application/json" localhost:8083/projects -d"{\"name\": \"Project D\", \"accountId\": \"2\"}"
+#11
+
+#Create an allocation using Project A's id.
+curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations/ -d"{\"projectId\": \"10\", \"userId\": \"2\", \"firstDay\": \"2015-05-17\", \"lastDay\": \"2015-05-18\"}"
+#6
+
+
+#Stop the registration server.
+#Create an allocation using Project B's id. The call should fail because there is no cached result for Project B.
+curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations/ -d"{\"projectId\": \"11\", \"userId\": \"2\", \"firstDay\": \"2015-05-17\", \"lastDay\": \"2015-05-18\"}"
+
+#Create an allocation using Project A's id. The call should succeed because there is a cached result for Project A.
+curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations/ -d"{\"projectId\": \"10\", \"userId\": \"2\", \"firstDay\": \"2015-05-17\", \"lastDay\": \"2015-05-18\"}"
+
+#Start the registration server.
+#Create an allocation with Project B's id. The call should eventually succeed because the registration server is back up. It may take #a bit for the circuit to recognize the registration server is back up.
+
+curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations/ -d"{\"projectId\": \"11\", \"userId\": \"2\", \"firstDay\": \"2015-05-17\", \"lastDay\": \"2015-05-18\"}"
+
