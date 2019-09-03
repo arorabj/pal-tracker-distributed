@@ -76,3 +76,30 @@ curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations/ -d
 
 curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations/ -d"{\"projectId\": \"11\", \"userId\": \"2\", \"firstDay\": \"2015-05-17\", \"lastDay\": \"2015-05-18\"}"
 
+
+
+cd ~/workspace/assignment-submission
+./gradlew cloudNativeDeveloperDistributedSystemWithCircuitBreaker \
+    -PregistrationServerUrl=https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io \
+    -PbacklogServerUrl=https://backlog-pal-ashish-anant.apps.evans.pal.pivotal.io \
+    -PallocationsServerUrl=https://allocations-pal-ashish-anant.apps.evans.pal.pivotal.io \
+    -PtimesheetsServerUrl=https://timesheets-pal-ashish-anant.apps.evans.pal.pivotal.io
+
+
+curl -i -XPOST -H"Content-Type: application/json" https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io/registration -d'{"name": "Pete"}'
+
+#Find the account associated to the created user.
+curl -i https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io/accounts?ownerId=4
+
+#Create Project A, and Project B using the registration server.
+curl -i -XPOST -H"Content-Type: application/json" https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io/projects -d"{\"name\": \"Project C\", \"accountId\": \"4\"}" 
+#4
+curl -i -XPOST -H"Content-Type: application/json" https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io/projects -d"{\"name\": \"Project D\", \"accountId\": \"4\"}"
+#5
+
+#Create an allocation using Project A's id.
+curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations/ -d"{\"projectId\": \"10\", \"userId\": \"2\", \"firstDay\": \"2015-05-17\", \"lastDay\": \"2015-05-18\"}"
+#6
+
+
+
