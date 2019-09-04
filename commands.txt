@@ -108,43 +108,51 @@ curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations/ -d
 
 curl -k "https://allocations-pal-ashish-anant.apps.evans.pal.pivotal.io/oauth/token" -i -u "03ff0f46-ba90-4cbf-95c0-903008f02921:596f16a8-a962-46d5-aeba-7365e84fb022" -X POST -H 'Accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials&response_type=token'
 
+curl 'http://localhost:8999/oauth/token' -i -u 'tracker-client:supersecret' -X POST -H 'Accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials&response_type=token&token_format=opaque'
 
-curl -k "https://p-spring-cloud-services.uaa.sys.evans.pal.pivotal.io/oauth/token" -i -u "p-service-registry-e2570383-aedc-453d-80fb-2d2699e108a0:aFMpTeBcExPq" -X POST -H 'Accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials&response_type=token'
+{"access_token":"5af292ab-e726-43c6-bc5a-0c7f20388923","token_type":"bearer","expires_in":43199,"scope":"openid"}
 
-"client_id": "p-service-registry-e2570383-aedc-453d-80fb-2d2699e108a0",
-     "client_secret": "aFMpTeBcExPq",
+curl localhost:8083 -H"Authorization: Bearer 5af292ab-e726-43c6-bc5a-0c7f20388923"
 
- "p-service-registry": [
+curl -k "https://login.sys.evans.pal.pivotal.io" -i -u "6583957d-c23b-4a4c-bf93-d020a356fe59:e0aaa98d-3c79-4d54-b1d8-b48509e0d9d4" -X POST -H 'Accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials&response_type=token'
+
+curl https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io/registration -H"Authorization: Bearer ${ACCESS_TOKEN}"
+
+
+System-Provided:
+{
+ "VCAP_SERVICES": {
+  "p-identity": [
    {
     "binding_name": null,
     "credentials": {
-     "access_token_uri": "https://p-spring-cloud-services.uaa.sys.evans.pal.pivotal.io/oauth/token",
-     "client_id": "p-service-registry-e2570383-aedc-453d-80fb-2d2699e108a0",
-     "client_secret": "aFMpTeBcExPq",
-     "uri": "https://eureka-5b9b80df-53f9-4a8a-b533-c7610f6e27d9.apps.evans.pal.pivotal.io"
+     "auth_domain": "https://login.sys.evans.pal.pivotal.io",
+     "client_id": "6583957d-c23b-4a4c-bf93-d020a356fe59",
+     "client_secret": "3ab2d09e-ed4e-46a0-890c-5190bb9db4ea"
     },
-    "instance_name": "tracker-service-registry",
-    "label": "p-service-registry",
-    "name": "tracker-service-registry",
-    "plan": "standard",
+    "instance_name": "tracker-sso",
+    "label": "p-identity",
+    "name": "tracker-sso",
+    "plan": "uaa",
     "provider": null,
     "syslog_drain_url": null,
-    "tags": [
-     "eureka",
-     "discovery",
-     "registry",
-     "spring-cloud"
-    ],
+    "tags": [],
     "volume_mounts": []
+   }
 
 
+curl -k "https://login.sys.evans.pal.pivotal.io/oauth/token" -i -u "6583957d-c23b-4a4c-bf93-d020a356fe59:e0aaa98d-3c79-4d54-b1d8-b48509e0d9d4" -X POST -H 'Accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials&response_type=token'
 
+curl -k "https://login.sys.evans.pal.pivotal.io/oauth/token" -i -u "6583957d-c23b-4a4c-bf93-d020a356fe59:3ab2d09e-ed4e-46a0-890c-5190bb9db4ea" -X POST -H 'Accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials&response_type=token'
+
+
+curl https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io/registration -H"Authorization: Bearer eyJhbGciOiJSUzI1NiIsImprdSI6Imh0dHBzOi8vdWFhLnN5cy5ldmFucy5wYWwucGl2b3RhbC5pby90b2tlbl9rZXlzIiwia2lkIjoia2V5LTEiLCJ0eXAiOiJKV1QifQ.eyJqdGkiOiJiN2RmM2FmMjBiZmI0YjA0YmVhZTU1YzllZTdkMzI5YyIsInN1YiI6IjY1ODM5NTdkLWMyM2ItNGE0Yy1iZjkzLWQwMjBhMzU2ZmU1OSIsImF1dGhvcml0aWVzIjpbInVhYS5yZXNvdXJjZSJdLCJzY29wZSI6WyJ1YWEucmVzb3VyY2UiXSwiY2xpZW50X2lkIjoiNjU4Mzk1N2QtYzIzYi00YTRjLWJmOTMtZDAyMGEzNTZmZTU5IiwiY2lkIjoiNjU4Mzk1N2QtYzIzYi00YTRjLWJmOTMtZDAyMGEzNTZmZTU5IiwiYXpwIjoiNjU4Mzk1N2QtYzIzYi00YTRjLWJmOTMtZDAyMGEzNTZmZTU5IiwiZ3JhbnRfdHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsInJldl9zaWciOiI4MTYyMzJjYiIsImlhdCI6MTU2NzU3MDYxNywiZXhwIjoxNTY3NjEzODE3LCJpc3MiOiJodHRwczovL3VhYS5zeXMuZXZhbnMucGFsLnBpdm90YWwuaW8vb2F1dGgvdG9rZW4iLCJ6aWQiOiJ1YWEiLCJhdWQiOlsidWFhIiwiNjU4Mzk1N2QtYzIzYi00YTRjLWJmOTMtZDAyMGEzNTZmZTU5Il19.bnEKATAtvZafGnxsjFTNVEy5Zii6XZBajp8pOWpV7oQoyrkCW8cB-mIXCWdtOXi7Ug5f0_xMoqM5gWRg1_d-oJldRqBUCfnJaxImbBSLYoQM2BCE_BKIQIjlfaXvcMFZuPPBMGQ_SpSLf_hS6V9-1XNEbbndt93TQMg-7nGp_xmQO4UzOW5a5lZgKaPb7BLm0K__DPzKTrLnswyRrn8fZpiqA1EjMCakLVaz5aO4DMnQJyA7tSLPE9eTJhnWI_tLsoLzez1DGThO4646vZb9si448Sjy1MSXUheegjnnL4sx_Yr5mjNSk-_ywnWT9l1M-fZh6KQ0VQT6AwqwxLhB7Q"
 
 cd ~/workspace/assignment-submission
 ./gradlew cloudNativeDeveloperDistributedSystemWithSecurity \
-    -PuaaUrl=https://p-spring-cloud-services.uaa.sys.evans.pal.pivotal.io/oauth/token \
-    -PclientId=p-service-registry-e2570383-aedc-453d-80fb-2d2699e108a0 \
-    -PclientSecret=aFMpTeBcExPq \
+    -PuaaUrl=https://login.sys.evans.pal.pivotal.io \
+    -PclientId=6583957d-c23b-4a4c-bf93-d020a356fe59 \
+    -PclientSecret=3ab2d09e-ed4e-46a0-890c-5190bb9db4ea \
     -PregistrationServerUrl=https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io \
     -PbacklogServerUrl=https://backlog-pal-ashish-anant.apps.evans.pal.pivotal.io \
     -PallocationsServerUrl=https://allocations-pal-ashish-anant.apps.evans.pal.pivotal.io \
