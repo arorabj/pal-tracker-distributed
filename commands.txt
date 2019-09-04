@@ -1,3 +1,4 @@
+
 curl -i -XPOST -H"Content-Type: application/json" localhost:8083/registration -d'{"name": "Pete"}'
 curl -i localhost:8083/users/1
 curl -i localhost:8083/accounts?ownerId=1
@@ -14,6 +15,9 @@ curl -i localhost:8084/time-entries?userId=1
 
 
 cf  create-service p-service-registry standard tracker-service-registry
+//Creating sso services named as tracker-sso, all provided services can be find out in marketplace of pivtoal
+ cf create-service p-identity uaa tracker-sso
+
 
 CF_API_URL 
 CF_ORG
@@ -102,4 +106,46 @@ curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations/ -d
 #6
 
 
+curl -k "https://allocations-pal-ashish-anant.apps.evans.pal.pivotal.io/oauth/token" -i -u "03ff0f46-ba90-4cbf-95c0-903008f02921:596f16a8-a962-46d5-aeba-7365e84fb022" -X POST -H 'Accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials&response_type=token'
 
+
+curl -k "https://p-spring-cloud-services.uaa.sys.evans.pal.pivotal.io/oauth/token" -i -u "p-service-registry-e2570383-aedc-453d-80fb-2d2699e108a0:aFMpTeBcExPq" -X POST -H 'Accept: application/json' -H 'Content-Type: application/x-www-form-urlencoded' -d 'grant_type=client_credentials&response_type=token'
+
+"client_id": "p-service-registry-e2570383-aedc-453d-80fb-2d2699e108a0",
+     "client_secret": "aFMpTeBcExPq",
+
+ "p-service-registry": [
+   {
+    "binding_name": null,
+    "credentials": {
+     "access_token_uri": "https://p-spring-cloud-services.uaa.sys.evans.pal.pivotal.io/oauth/token",
+     "client_id": "p-service-registry-e2570383-aedc-453d-80fb-2d2699e108a0",
+     "client_secret": "aFMpTeBcExPq",
+     "uri": "https://eureka-5b9b80df-53f9-4a8a-b533-c7610f6e27d9.apps.evans.pal.pivotal.io"
+    },
+    "instance_name": "tracker-service-registry",
+    "label": "p-service-registry",
+    "name": "tracker-service-registry",
+    "plan": "standard",
+    "provider": null,
+    "syslog_drain_url": null,
+    "tags": [
+     "eureka",
+     "discovery",
+     "registry",
+     "spring-cloud"
+    ],
+    "volume_mounts": []
+
+
+
+
+cd ~/workspace/assignment-submission
+./gradlew cloudNativeDeveloperDistributedSystemWithSecurity \
+    -PuaaUrl=https://p-spring-cloud-services.uaa.sys.evans.pal.pivotal.io/oauth/token \
+    -PclientId=p-service-registry-e2570383-aedc-453d-80fb-2d2699e108a0 \
+    -PclientSecret=aFMpTeBcExPq \
+    -PregistrationServerUrl=https://registration-pal-ashish-anant.apps.evans.pal.pivotal.io \
+    -PbacklogServerUrl=https://backlog-pal-ashish-anant.apps.evans.pal.pivotal.io \
+    -PallocationsServerUrl=https://allocations-pal-ashish-anant.apps.evans.pal.pivotal.io \
+    -PtimesheetsServerUrl=https://timesheets-pal-ashish-anant.apps.evans.pal.pivotal.io
